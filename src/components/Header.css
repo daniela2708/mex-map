@@ -1,0 +1,45 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.wizeline-logo {
+  height: 24px;
+  width: auto;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 10px 20px;
+  }
+
+  .wizeline-logo {
+    height: 20px;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,32 @@
+.insights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 50px;
+  padding-top: 50px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.insight {
+  padding: 0;
+}
+
+.insight-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.insight-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .insights {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

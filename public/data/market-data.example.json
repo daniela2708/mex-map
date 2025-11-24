@@ -1,0 +1,25 @@
+{
+  "_comment": "This is an example of how to structure your real market data",
+  "_instructions": [
+    "1. Replace the dummy percentages with your actual market research data",
+    "2. Update volumes to reflect real sales data in millions of units",
+    "3. Ensure pepsi + cocaCola percentages = 100 for each state",
+    "4. Keep the same state codes (mx-ag, mx-bc, etc.) - these match the map topology",
+    "5. After updating, rename or copy this structure to market-data.json"
+  ],
+
+  "mx-ag": {
+    "pepsi": 38,
+    "cocaCola": 62,
+    "pepsiVolume": 4.2,
+    "colaVolume": 6.8,
+    "name": "Aguascalientes"
+  },
+  "mx-bc": {
+    "pepsi": 52,
+    "cocaCola": 48,
+    "pepsiVolume": 18.5,
+    "colaVolume": 17.1,
+    "name": "Baja California"
+  }
+}
