@@ -1,168 +1,258 @@
-/* CONTENEDOR GENERAL DE LA SECCIÓN */
 .map-section {
-  padding: 32px 40px;
+  margin-top: 0;
 }
 
-/* TITULOS E INTRO (arriba de las gráficas) */
 .map-header {
-  max-width: 900px;
-  margin: 0 auto 24px;
+  margin-bottom: 32px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 4px;
+  color: #1a1a1a;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: left;
 }
 
 .section-subtitle {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 22px 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .section-description {
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  font-weight: 400;
+  margin-bottom: 16px;
+  text-align: left;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.section-description:last-of-type {
+  margin-bottom: 0;
 }
 
 .map-intro {
-  max-width: 900px;
-  margin: 0 auto 24px;
+  margin-bottom: 32px;
 }
 
 .map-intro-title {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 4px;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: left;
 }
 
 .map-intro-text {
-  font-size: 13px;
-  color: #555;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  font-weight: 400;
+  margin: 0;
+  text-align: left;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ------------ LAYOUT DE LAS DOS GRÁFICAS ------------ */
-
-/* Fila que contiene ranking y mapa */
-.charts-row {
+.charts-grid {
   display: flex;
   gap: 24px;
-  margin-top: 8px;
-
-  /* Alto fijo para que ambas cards tengan el MISMO alto externo */
-  height: 520px;            /* cambia a 60vh/70vh si prefieres relativo */
   align-items: stretch;
+  --panel-height: 720px;
 }
 
-/* Columnas izquierda/derecha */
-.charts-column {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;             /* importante para que flex no rompa el layout */
-}
-
-/* Ranking más angosto */
-.charts-column--left {
-  flex: 0 0 35%;
-}
-
-/* Mapa más ancho */
-.charts-column--right {
-  flex: 1;
-}
-
-/* Card genérica (misma para ambas) */
-.card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 16px 20px;
-  box-shadow: 0 0 0 1px #f1f1f1;
-}
-
-/* Header fijo arriba */
-.card-header {
-  flex: 0 0 auto;
-  margin-bottom: 8px;
-}
-
-/* Cuerpo que se estira y marca la zona de la gráfica */
-.card-body {
-  flex: 1 1 auto;
-  min-height: 0;           /* sin esto, el scroll no funciona bien */
-}
-
-/* RANKING: scroll interno vertical */
-.card-body--scroll {
-  overflow-y: auto;
-}
-
-/* MAPA: que la gráfica ocupe todo el alto disponible */
-.card-body--map {
-  display: flex;
-}
-
-/* Footer (leyenda) bajo el mapa, cuenta dentro del alto de la card */
-.card-footer {
-  flex: 0 0 auto;
-  margin-top: 10px;
-}
-
-/* ------------ CONTENEDOR DE HIGHCHARTS ------------ */
-
-.chart-container {
+.ranking-container {
+  position: relative;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 32px;
+  background: #fafafa;
   width: 100%;
-  height: 100%;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  height: var(--panel-height);
 }
 
-/* Forzar que el div interno de Highcharts llene el contenedor
-   (evita que el mapa se haga más chico o tenga altura rara) */
-.chart-container > div {
-  width: 100% !important;
-  height: 100% !important;
+.ranking-chart-wrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
 }
 
-/* ------------ LEYENDA DEL MAPA ------------ */
+.ranking-chart-inner {
+  width: 100%;
+  padding-right: 8px;
+}
 
+.ranking-chart-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ranking-chart-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.ranking-chart-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.ranking-chart-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.map-container {
+  position: relative;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 32px;
+  background: #fafafa;
+  flex: 1;
+  height: var(--panel-height);
+  display: flex;
+  flex-direction: column;
+}
+
+.map-chart-wrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.map-chart-inner {
+  flex: 1;
+  min-height: 0;
+}
+
+.map-title-bar {
+  margin-bottom: 20px;
+}
+
+.map-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.loading {
+  text-align: center;
+  padding: 100px;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Legend */
 .legend {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  z-index: 100;
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 11px;
+  gap: 20px;
 }
 
 .legend-title {
+  font-size: 9px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #444;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  color: #1a1a1a;
+  margin-right: 8px;
 }
 
 .brand-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.brand-label:last-child {
+  margin-bottom: 0;
 }
 
 .brand-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  display: inline-block;
+  flex-shrink: 0;
 }
 
 .brand-dot.pepsi {
-  background: #1c52a2;
+  background: #1C52A2;
 }
 
 .brand-dot.coke {
-  background: #f40000;
+  background: #F40000;
 }
 
 .brand-dot.others {
-  background: #b0b0b0;
+  background: #B0B0B0;
+}
+
+@media (max-width: 1024px) {
+  .charts-grid {
+    flex-direction: column;
+    --panel-height: 600px;
+  }
+
+  .ranking-container {
+    order: 2;
+    width: 100%;
+    height: auto;
+  }
+
+  .map-container {
+    order: 1;
+    height: var(--panel-height);
+  }
+}
+
+@media (max-width: 768px) {
+  .map-container,
+  .ranking-container {
+    padding: 20px;
+  }
+
+  .legend {
+    bottom: 12px;
+    padding: 8px 12px;
+    gap: 12px;
+  }
+
+  .brand-label {
+    font-size: 9px;
+  }
+
+  .legend-title {
+    font-size: 8px;
+    margin-right: 4px;
+  }
 }
