@@ -10,6 +10,12 @@ interface StateRankingsChartProps {
 
 export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingOptions, stateFlags }) => {
   const modifiedOptions: Highcharts.Options = useMemo(() => {
+    const totalStates =
+      rankingOptions?.series && rankingOptions.series[0] &&
+      Array.isArray((rankingOptions.series[0] as Highcharts.SeriesOptionsType & { data?: Highcharts.PointOptionsObject[] }).data)
+        ? ((rankingOptions.series[0] as Highcharts.SeriesOptionsType & { data?: Highcharts.PointOptionsObject[] }).data as Highcharts.PointOptionsObject[]).length
+        : 0;
+
     return {
       ...rankingOptions,
       tooltip: {
@@ -49,69 +55,56 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
 
           const flagUrl = stateFlags[stateData.name] || '';
 
+          const rank = typeof this.index === 'number' ? this.index + 1 : null;
+
+          const formatBrandRow = (
+            label: string,
+            percentage: number,
+            volume: number,
+            color: string
+          ) => `
+            <div class="ranking-tooltip-metric">
+              <div class="ranking-tooltip-metric-header">
+                <div class="ranking-tooltip-brand">
+                  <span class="ranking-tooltip-dot" style="background: ${color};"></span>
+                  <span>${label}</span>
+                </div>
+                <div class="ranking-tooltip-values">
+                  <span class="ranking-tooltip-percentage">${percentage}%</span>
+                  <span class="ranking-tooltip-volume">${volume.toFixed(1)}M units</span>
+                </div>
+              </div>
+              <div class="ranking-tooltip-bar-bg">
+                <div class="ranking-tooltip-bar" style="width: ${percentage}%; background: ${color};"></div>
+              </div>
+            </div>
+          `;
+
           return `
-            <div style="padding: 16px; min-width: 220px; font-family: 'Inter', sans-serif; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-              <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-                ${flagUrl ? `<img src="${flagUrl}" alt="${stateData.name} coat of arms" style="width: 36px; height: auto; border: 1px solid #e5e5e5; border-radius: 3px; flex-shrink: 0;" onerror="this.style.display='none';" />` : ''}
-                <span>${stateData.name}</span>
-              </div>
-
-              <div style="text-align: left; font-size: 11px; color: #666; font-weight: 500; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e5e5e5;">
-                <strong style="color: ${dominantColor}; font-weight: 600;">${dominant}</strong> leads
-              </div>
-
-              <div style="margin: 10px 0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 6px; height: 6px; background: #1c52a2; border-radius: 50%; display: inline-block;"></span>
-                    <span style="color: #666; font-weight: 500; font-size: 11px;">Pepsi</span>
+            <div class="ranking-tooltip-card">
+              <div class="ranking-tooltip-header">
+                <div class="ranking-tooltip-header-content">
+                  ${flagUrl ? `<img src="${flagUrl}" alt="${stateData.name} coat of arms" class="ranking-tooltip-flag" onerror="this.style.display='none';" />` : ''}
+                  <div class="ranking-tooltip-title-wrap">
+                    <p class="ranking-tooltip-title">${stateData.name}</p>
+                    ${rank ? `<p class="ranking-tooltip-subtitle">Rank #${rank}${totalStates ? ` of ${totalStates}` : ''}</p>` : ''}
                   </div>
-                  <div style="text-align: right;">
-                    <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; line-height: 1;">${pepsiPercentage}%</div>
-                    <div style="font-size: 9px; color: #999; font-weight: 400; margin-top: 2px;">${pepsiVol}M units</div>
-                  </div>
-                </div>
-                <div style="width: 100%; height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden;">
-                  <div style="width: ${pepsiPercentage}%; height: 100%; background: #1c52a2; border-radius: 2px;"></div>
+                  <span class="ranking-tooltip-chip" style="color: ${dominantColor}; background: ${dominantColor}15;">Top ${dominant}</span>
                 </div>
               </div>
 
-              <div style="margin: 10px 0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 6px; height: 6px; background: #f40000; border-radius: 50%; display: inline-block;"></span>
-                    <span style="color: #666; font-weight: 500; font-size: 11px;">Coca-Cola</span>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; line-height: 1;">${colaPercentage}%</div>
-                    <div style="font-size: 9px; color: #999; font-weight: 400; margin-top: 2px;">${colaVol}M units</div>
-                  </div>
+              <div class="ranking-tooltip-content">
+                <div class="ranking-tooltip-dominant">
+                  <strong style="color: ${dominantColor};">${dominant}</strong> leads with ${max}% share
                 </div>
-                <div style="width: 100%; height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden;">
-                  <div style="width: ${colaPercentage}%; height: 100%; background: #f40000; border-radius: 2px;"></div>
-                </div>
-              </div>
 
-              <div style="margin: 10px 0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 6px; height: 6px; background: #b0b0b0; border-radius: 50%; display: inline-block;"></span>
-                    <span style="color: #666; font-weight: 500; font-size: 11px;">Others</span>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-weight: 600; font-size: 15px; color: #1a1a1a; line-height: 1;">${othersPercentage}%</div>
-                    <div style="font-size: 9px; color: #999; font-weight: 400; margin-top: 2px;">${othersVol}M units</div>
-                  </div>
-                </div>
-                <div style="width: 100%; height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden;">
-                  <div style="width: ${othersPercentage}%; height: 100%; background: #b0b0b0; border-radius: 2px;"></div>
-                </div>
-              </div>
+                ${formatBrandRow('Pepsi', pepsiPercentage, pepsiVol, '#1c52a2')}
+                ${formatBrandRow('Coca-Cola', colaPercentage, colaVol, '#f40000')}
+                ${formatBrandRow('Others', othersPercentage, othersVol, '#b0b0b0')}
 
-              <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 9px; color: #999; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Total Volume</span>
-                  <span style="font-size: 10px; color: #666; font-weight: 500;">${totalVol.toFixed(1)}M units</span>
+                <div class="ranking-tooltip-total">
+                  <span class="ranking-tooltip-total-label">Total Volume</span>
+                  <span class="ranking-tooltip-total-value">${totalVol.toFixed(1)}M units</span>
                 </div>
               </div>
             </div>
