@@ -325,7 +325,7 @@ export const MapSection: React.FC = () => {
         setMapOptions(options);
         console.log('✅ DEBUG: Map options set successfully');
 
-        const rankingChartHeight = Math.max(rankingData.length * 32, 720);
+        const rankingChartHeight = Math.max(rankingData.length * 28, 560);
         const rankingMaxVolume = rankingData.length
           ? Math.max(...rankingData.map(point => point.y || 0))
           : 0;

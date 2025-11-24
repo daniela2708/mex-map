@@ -3,8 +3,8 @@
 }
 
 .map-header {
-  margin-bottom: 32px;
-  padding-bottom: 40px;
+  margin-bottom: 24px;
+  padding-bottom: 28px;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .map-intro {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .map-intro-title {
@@ -69,24 +69,26 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+
 .charts-grid {
   display: flex;
   gap: 24px;
   align-items: stretch;
-  --panel-height: 720px;
+  --map-height: 680px;
+  --ranking-height: 560px;
 }
 
 .ranking-container {
   position: relative;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
-  padding: 32px;
+  padding: 24px;
   background: #fafafa;
   width: 100%;
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  height: var(--panel-height);
+  height: var(--ranking-height);
 }
 
 .ranking-chart-wrapper {
@@ -125,10 +127,10 @@
   position: relative;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
-  padding: 32px;
+  padding: 24px;
   background: #fafafa;
   flex: 1;
-  height: var(--panel-height);
+  height: var(--map-height);
   display: flex;
   flex-direction: column;
 }
@@ -145,7 +147,7 @@
 }
 
 .map-title-bar {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .map-title {
@@ -166,7 +168,7 @@
 /* Legend */
 .legend {
   position: absolute;
-  bottom: 20px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 16px;
@@ -220,7 +222,8 @@
 @media (max-width: 1024px) {
   .charts-grid {
     flex-direction: column;
-    --panel-height: 600px;
+    --map-height: 620px;
+    --ranking-height: 520px;
   }
 
   .ranking-container {
@@ -231,7 +234,7 @@
 
   .map-container {
     order: 1;
-    height: var(--panel-height);
+    height: var(--map-height);
   }
 }
 
