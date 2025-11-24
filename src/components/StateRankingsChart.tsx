@@ -14,12 +14,6 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
   const chartRef = useRef<HighchartsReact.RefObject>(null);
   const stateFlagsRef = useRef(stateFlags);
 
-  // Debug: verificar banderas recibidas
-  useEffect(() => {
-    console.log('🏳️ StateRankingsChart - Banderas recibidas:', Object.keys(stateFlags).length, 'estados');
-    console.log('🏳️ Primeras banderas:', Object.keys(stateFlags).slice(0, 5));
-  }, [stateFlags]);
-
   // Actualizar la referencia cuando cambien las banderas
   useEffect(() => {
     stateFlagsRef.current = stateFlags;
@@ -89,48 +83,23 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
 
   // Configurar el callback del chart cuando esté listo
   const chartCallback = useCallback((chart: Highcharts.Chart) => {
-    console.log('🎯 Chart callback ejecutado');
-    console.log('🎯 Series:', chart.series);
-    console.log('🎯 Points:', chart.series[0]?.points);
-
     if (!chart.series[0] || !chart.series[0].points) {
-      console.error('❌ No hay puntos en la serie');
       return;
     }
 
     // Configurar eventos de hover para cada punto
-    chart.series[0].points.forEach((point: any, index: number) => {
-      console.log(`🎯 Configurando eventos para punto ${index}`);
-
+    chart.series[0].points.forEach((point: any) => {
       const element = point.graphic?.element;
-      if (!element) {
-        console.warn(`⚠️ No hay elemento gráfico para punto ${index}`);
+      if (!element || !tooltipRef.current) {
         return;
       }
-      if (!tooltipRef.current) {
-        console.warn(`⚠️ No hay tooltipRef`);
-        return;
-      }
-
-      console.log(`✅ Elemento configurado para punto ${index}`);
 
       element.addEventListener('mouseenter', () => {
-        console.log('🖱️ Mouse enter en barra!');
         const tooltip = tooltipRef.current;
-        if (!tooltip) {
-          console.error('❌ No tooltip ref en mouseenter');
-          return;
-        }
+        if (!tooltip) return;
 
-        console.log('🔍 Point options:', point.options);
         const stateData = point.options.data;
-        if (!stateData) {
-          console.error('❌ No state data found for point');
-          return;
-        }
-
-        console.log('🔍 State data:', stateData);
-        console.log('🔍 State flags available:', stateFlagsRef.current);
+        if (!stateData) return;
 
         const pepsiPercentage = stateData.pepsi;
         const colaPercentage = stateData.cocaCola;
@@ -154,7 +123,6 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
 
         // Obtener la URL de la bandera usando la referencia actualizada
         const flagUrl = stateFlagsRef.current[stateData.name] || '';
-        console.log('🔍 Flag URL for', stateData.name, ':', flagUrl);
 
         // Crear el HTML del tooltip usando el mismo diseño que el mapa
         tooltip.innerHTML = `

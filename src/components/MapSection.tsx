@@ -6,57 +6,31 @@ import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
 
 // Initialize Highcharts Map module
-console.log('🔍 DEBUG: Before importing map module');
-console.log('🔍 DEBUG: Highcharts object:', Highcharts);
-console.log('🔍 DEBUG: HighchartsMapModule imported:', HighchartsMapModule);
-console.log('🔍 DEBUG: Type of HighchartsMapModule:', typeof HighchartsMapModule);
-
-try {
-  (HighchartsMapModule as any)(Highcharts);
-  console.log('🔍 DEBUG: Map module initialized');
-} catch (error) {
-  console.error('❌ ERROR: Failed to initialize map module:', error);
-}
-
-console.log('🔍 DEBUG: Highcharts after map init:', Highcharts);
-console.log('🔍 DEBUG: Highcharts.maps?', Highcharts.maps);
+(HighchartsMapModule as any)(Highcharts);
 
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
   const [stateFlags, setStateFlags] = useState<Record<string, string>>({});
 
-  console.log('🔍 DEBUG: MapSection component rendered');
-
   useEffect(() => {
-    console.log('🔍 DEBUG: useEffect triggered - fetching data');
-
     // Fetch market data, topology, and state flags in parallel
     Promise.all([
       fetch('/data/market-data.json').then(res => {
-        console.log('🔍 DEBUG: Market data fetch response:', res.status);
         if (!res.ok) throw new Error(`Failed to fetch market data: ${res.status}`);
         return res.json();
       }),
       fetch('/data/mx-all.topo.json').then(res => {
-        console.log('🔍 DEBUG: Topology fetch response:', res.status);
         if (!res.ok) throw new Error(`Failed to fetch topology: ${res.status}`);
         return res.json();
       }),
       fetch('/mexico_state_flags/state_flags.json').then(res => {
-        console.log('🔍 DEBUG: State flags fetch response:', res.status);
         if (!res.ok) throw new Error(`Failed to fetch state flags: ${res.status}`);
         return res.json();
       })
     ])
       .then(([marketDataJson, topology, stateFlagsJson]) => {
-        console.log('🔍 DEBUG: Market data loaded:', marketDataJson);
-        console.log('🔍 DEBUG: Topology data loaded:', topology);
-        console.log('🔍 DEBUG: State flags loaded:', stateFlagsJson);
-
         // Guardar las banderas en el estado
-        console.log('🏳️ DEBUG: Setting state flags, count:', Object.keys(stateFlagsJson).length);
-        console.log('🏳️ DEBUG: First 3 flags:', Object.keys(stateFlagsJson).slice(0, 3).map(key => `${key}: ${stateFlagsJson[key]}`));
         setStateFlags(stateFlagsJson);
 
         // Transform data for Highcharts - assign color based on dominant brand
@@ -98,8 +72,6 @@ export const MapSection: React.FC = () => {
             };
           })
           .sort((a, b) => b.y - a.y); // Sort by total volume descending
-
-        console.log('🔍 DEBUG: Ranking data:', rankingData);
 
         const options: Highcharts.Options = {
           chart: {
@@ -183,7 +155,7 @@ export const MapSection: React.FC = () => {
               return `
                 <div style="padding: 16px; min-width: 220px; font-family: 'Inter', sans-serif;">
                   <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-                    ${flagUrl ? `<img src="${flagUrl}" alt="${stateData.name} coat of arms" style="width: 36px; height: auto; border: 1px solid #e5e5e5; border-radius: 3px; flex-shrink: 0;" onerror="this.style.display='none'; console.error('Failed to load flag for: ${stateData.name}');" />` : ''}
+                    ${flagUrl ? `<img src="${flagUrl}" alt="${stateData.name} coat of arms" style="width: 36px; height: auto; border: 1px solid #e5e5e5; border-radius: 3px; flex-shrink: 0;" />` : ''}
                     <span>${stateData.name}</span>
                   </div>
 
@@ -287,9 +259,7 @@ export const MapSection: React.FC = () => {
           }]
         };
 
-        console.log('🔍 DEBUG: Map options created:', options);
         setMapOptions(options);
-        console.log('✅ DEBUG: Map options set successfully');
 
         const rankingChartHeight = Math.max(rankingData.length * 32, 500);
 
@@ -355,29 +325,20 @@ export const MapSection: React.FC = () => {
           }]
         };
 
-        console.log('🔍 DEBUG: Ranking options created:', rankingChartOptions);
         setRankingOptions(rankingChartOptions);
-        console.log('✅ DEBUG: Ranking options set successfully');
       })
       .catch(error => {
-        console.error('❌ ERROR: Failed to load map data:', error);
-        console.error('❌ ERROR details:', error.message);
-        console.error('❌ ERROR stack:', error.stack);
+        console.error('Failed to load map data:', error);
       });
   }, []);
 
   if (!mapOptions) {
-    console.log('🔍 DEBUG: Showing loading state - mapOptions is null');
     return (
       <section className="map-section">
         <div className="loading">Loading map...</div>
       </section>
     );
   }
-
-  console.log('🔍 DEBUG: Rendering map with options:', mapOptions);
-  console.log('🔍 DEBUG: Highcharts available for render:', Highcharts);
-  console.log('🔍 DEBUG: Using constructorType: mapChart');
 
   return (
     <section className="map-section">
@@ -401,18 +362,8 @@ export const MapSection: React.FC = () => {
 
       <div className="charts-grid">
         {/* Ranking Chart */}
-        {rankingOptions && Object.keys(stateFlags).length > 0 ? (
-          <>
-            {console.log('🎨 DEBUG: Rendering StateRankingsChart with flags:', Object.keys(stateFlags).length)}
-            <StateRankingsChart rankingOptions={rankingOptions} stateFlags={stateFlags} />
-          </>
-        ) : (
-          <>
-            {console.log('⏳ DEBUG: Waiting for ranking data or flags', {
-              hasRankingOptions: !!rankingOptions,
-              flagsCount: Object.keys(stateFlags).length
-            })}
-          </>
+        {rankingOptions && Object.keys(stateFlags).length > 0 && (
+          <StateRankingsChart rankingOptions={rankingOptions} stateFlags={stateFlags} />
         )}
 
         {/* Map Chart */}
