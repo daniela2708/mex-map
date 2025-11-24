@@ -143,32 +143,6 @@ export const MapSection: React.FC = () => {
             style: {
               padding: '0'
             },
-            followPointer: true,
-            outside: true,
-            positioner: function (this: Highcharts.Tooltip, labelWidth, labelHeight, point) {
-              const chartPosition = this.chart.pointer.getChartPosition ? this.chart.pointer.getChartPosition() : { left: 0, top: 0 };
-              const tooltipPos = (point && (point as Highcharts.Point).tooltipPos) || [0, 0];
-              const margin = 12;
-
-              let x = tooltipPos[0] + chartPosition.left + this.chart.plotLeft + margin;
-              let y = tooltipPos[1] + chartPosition.top + this.chart.plotTop + margin;
-
-              const viewportWidth = window.innerWidth;
-              const viewportHeight = window.innerHeight;
-
-              if (x + labelWidth + margin > viewportWidth) {
-                x = viewportWidth - labelWidth - margin;
-              }
-
-              if (y + labelHeight + margin > viewportHeight) {
-                y = viewportHeight - labelHeight - margin;
-              }
-
-              return {
-                x: Math.max(margin, x),
-                y: Math.max(margin, y)
-              };
-            },
             formatter: function() {
               const stateCode = (this as any).point?.['hc-key'] as string;
               const stateData = marketDataJson[stateCode];
