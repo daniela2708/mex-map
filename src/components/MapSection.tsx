@@ -285,13 +285,16 @@ export const MapSection: React.FC = () => {
         console.log('✅ DEBUG: Map options set successfully');
 
         const rankingChartHeight = Math.max(rankingData.length * 32, 720);
+        const rankingMaxVolume = rankingData.length
+          ? Math.max(...rankingData.map(point => point.y || 0))
+          : 0;
 
         const rankingChartOptions: Highcharts.Options = {
           chart: {
             type: 'bar',
             backgroundColor: '#ffffff',
             height: rankingChartHeight,
-            marginLeft: 180,
+            marginLeft: 240,
             marginRight: 20
           },
           credits: {
@@ -303,6 +306,7 @@ export const MapSection: React.FC = () => {
           xAxis: {
             type: 'category',
             labels: {
+              align: 'left',
               style: {
                 fontSize: '10px',
                 fontFamily: 'Inter, sans-serif',
@@ -312,6 +316,7 @@ export const MapSection: React.FC = () => {
           },
           yAxis: {
             min: 0,
+            max: rankingMaxVolume ? rankingMaxVolume * 1.25 : undefined,
             title: {
               text: undefined
             },
