@@ -14,6 +14,8 @@ export interface StateMarketData {
   othersVolume: number;
 }
 
+type MapPointOptions = Highcharts.SeriesMapDataOptions & { 'hc-key': string };
+
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
@@ -21,16 +23,13 @@ export const MapSection: React.FC = () => {
   const [isMapModuleLoaded, setIsMapModuleLoaded] = useState(false);
 
   useEffect(() => {
-    // Initialize Highcharts Map module
     import('highcharts/modules/map').then(module => {
-      type HighchartsMapModule = (hc: typeof Highcharts) => void;
+      const initMap = (module as unknown as { default?: (hc: typeof Highcharts) => void }).default;
 
-      const initMap = (module as { default?: HighchartsMapModule }).default;
       if (typeof initMap === 'function') {
         initMap(Highcharts);
       }
 
-      // Disable accessibility warning
       Highcharts.setOptions({
         accessibility: {
           enabled: false
@@ -69,7 +68,7 @@ export const MapSection: React.FC = () => {
           setStateFlags(flags);
 
           // Transform data for Highcharts - assign color based on dominant brand
-          const data: Highcharts.SeriesMapDataOptions[] = Object.keys(marketData).map(key => {
+          const data: MapPointOptions[] = Object.keys(marketData).map(key => {
             const stateData = marketData[key];
             const max = Math.max(stateData.pepsi, stateData.cocaCola, stateData.others);
 
@@ -160,8 +159,8 @@ export const MapSection: React.FC = () => {
             style: {
               padding: '0'
             },
-              formatter: function(this: Highcharts.TooltipFormatterContextObject) {
-                const pointOptions = this.point?.options as Highcharts.SeriesMapDataOptions | undefined;
+              formatter: function(this: Highcharts.Point) {
+                const pointOptions = this.options as MapPointOptions | undefined;
                 const stateCode = pointOptions?.['hc-key'];
                 const stateData = stateCode ? marketData[stateCode] : undefined;
 
@@ -273,9 +272,9 @@ export const MapSection: React.FC = () => {
             },
             dataLabels: {
               enabled: true,
-              formatter: function(this: Highcharts.DataLabelsFormatterContextObject) {
+              formatter: function(this: Highcharts.Point) {
                 // Extract state abbreviation from hc-key (e.g., 'mx-ag' -> 'AG')
-                const pointOptions = this.point?.options as Highcharts.SeriesMapDataOptions | undefined;
+                const pointOptions = this.options as MapPointOptions | undefined;
                 const key = pointOptions?.['hc-key'];
                 if (!key) return '';
                 const abbr = key.split('-')[1];
