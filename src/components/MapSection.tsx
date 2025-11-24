@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import { BrandDominanceMap } from './BrandDominanceMap';
 import { StateRankingsChart } from './StateRankingsChart';
@@ -8,30 +8,31 @@ export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
   const [stateFlags, setStateFlags] = useState<Record<string, string>>({});
-  const mapInitialized = useRef(false);
+  const [isMapModuleLoaded, setIsMapModuleLoaded] = useState(false);
 
   useEffect(() => {
-    // Initialize Highcharts Map module only once
-    if (!mapInitialized.current) {
-      import('highcharts/modules/map').then((module: any) => {
-        const initMap = module.default;
-        if (typeof initMap === 'function') {
-          initMap(Highcharts);
+    // Initialize Highcharts Map module
+    import('highcharts/modules/map').then((module: any) => {
+      const initMap = module.default;
+      if (typeof initMap === 'function') {
+        initMap(Highcharts);
+      }
+
+      // Disable accessibility warning
+      Highcharts.setOptions({
+        accessibility: {
+          enabled: false
         }
-
-        // Disable accessibility warning
-        Highcharts.setOptions({
-          accessibility: {
-            enabled: false
-          }
-        });
-
-        mapInitialized.current = true;
       });
-    }
+
+      setIsMapModuleLoaded(true);
+    });
   }, []);
 
   useEffect(() => {
+    // Wait for map module to load before fetching data
+    if (!isMapModuleLoaded) return;
+
     // Fetch market data, topology, and state flags in parallel
     Promise.all([
       fetch('/data/market-data.json').then(res => {
@@ -348,7 +349,7 @@ export const MapSection: React.FC = () => {
       .catch(error => {
         console.error('Failed to load map data:', error);
       });
-  }, []);
+  }, [isMapModuleLoaded]);
 
   if (!mapOptions) {
     return (
