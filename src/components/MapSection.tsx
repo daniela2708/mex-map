@@ -6,9 +6,7 @@ import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
 
 // Initialize Highcharts Map module
-if (typeof HighchartsMap === 'function') {
-  HighchartsMap(Highcharts);
-}
+(HighchartsMap as any)(Highcharts);
 
 // Disable accessibility warning
 Highcharts.setOptions({
