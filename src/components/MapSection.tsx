@@ -98,7 +98,7 @@ export const MapSection: React.FC = () => {
           chart: {
             map: topology as any,
             backgroundColor: '#ffffff',
-            height: 720,
+            height: '100%',
             spacing: [8, 12, 8, 12],
             marginTop: 10,
             marginBottom: 10
@@ -550,57 +550,53 @@ export const MapSection: React.FC = () => {
         </p>
       </div>
 
-      <div className="charts-grid">
-        {/* Ranking Chart */}
-        <div className="ranking-container">
-          <div className="map-title-bar">
-            <h3 className="map-title">Total Volume Ranking by State</h3>
-          </div>
-
-          {rankingOptions && (
-            <div className="ranking-chart-wrapper">
-              <div className="ranking-chart-inner">
+      <div className="charts-row">
+        <div className="charts-column charts-column--left">
+          <div className="card">
+            <div className="card-header">
+              <h3>Total Volume Ranking by State</h3>
+            </div>
+            <div className="card-body card-body--scroll">
+              {rankingOptions && (
                 <HighchartsReact
                   highcharts={Highcharts}
                   options={rankingOptions}
+                  containerProps={{ className: 'chart-container' }}
                 />
-              </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Map Chart */}
-        <div className="map-container">
-          <div className="map-title-bar">
-            <h3 className="map-title">Pepsi vs Coca-Cola Market Share by State</h3>
-          </div>
-
-          <div className="map-chart-wrapper">
-            <div className="map-chart-inner">
+        <div className="charts-column charts-column--right">
+          <div className="card">
+            <div className="card-header">
+              <h3>Pepsi vs Coca-Cola Market Share by State</h3>
+            </div>
+            <div className="card-body card-body--map">
               <HighchartsReact
                 highcharts={Highcharts}
                 constructorType={'mapChart'}
                 options={mapOptions}
+                containerProps={{ className: 'chart-container' }}
               />
             </div>
-          </div>
+            <div className="card-footer legend">
+              <div className="legend-title">Dominant Brand</div>
+              <div className="brand-label pepsi-label">
+                <span className="brand-dot pepsi"></span>
+                <span>Pepsi</span>
+              </div>
 
-          {/* Legend */}
-          <div className="legend">
-            <div className="legend-title">Dominant Brand</div>
-            <div className="brand-label pepsi-label">
-              <span className="brand-dot pepsi"></span>
-              <span>Pepsi</span>
-            </div>
+              <div className="brand-label coke-label">
+                <span className="brand-dot coke"></span>
+                <span>Coca-Cola</span>
+              </div>
 
-            <div className="brand-label coke-label">
-              <span className="brand-dot coke"></span>
-              <span>Coca-Cola</span>
-            </div>
-
-            <div className="brand-label others-label">
-              <span className="brand-dot others"></span>
-              <span>Others</span>
+              <div className="brand-label others-label">
+                <span className="brand-dot others"></span>
+                <span>Others</span>
+              </div>
             </div>
           </div>
         </div>
