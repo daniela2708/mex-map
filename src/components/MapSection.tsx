@@ -284,11 +284,13 @@ export const MapSection: React.FC = () => {
         setMapOptions(options);
         console.log('✅ DEBUG: Map options set successfully');
 
+        const rankingChartHeight = Math.max(rankingData.length * 32, 720);
+
         const rankingChartOptions: Highcharts.Options = {
           chart: {
             type: 'bar',
             backgroundColor: '#ffffff',
-            height: '100%',
+            height: rankingChartHeight,
             marginLeft: 180,
             marginRight: 20
           },
