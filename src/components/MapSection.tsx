@@ -98,6 +98,7 @@ export const MapSection: React.FC = () => {
           chart: {
             map: topology as any,
             backgroundColor: '#ffffff',
+            height: '100%',
             spacing: [10, 10, 10, 10]
           },
           credits: {
@@ -283,16 +284,11 @@ export const MapSection: React.FC = () => {
         setMapOptions(options);
         console.log('✅ DEBUG: Map options set successfully');
 
-        // Create ranking chart options
-        // Calculate dynamic height to enable scrolling with larger bars
-        const barHeight = 45; // Height per bar for better visibility
-        const chartHeight = rankingData.length * barHeight + 80; // Add padding
-
         const rankingChartOptions: Highcharts.Options = {
           chart: {
             type: 'bar',
             backgroundColor: '#ffffff',
-            height: chartHeight,
+            height: '100%',
             marginLeft: 180,
             marginRight: 20
           },
@@ -529,11 +525,15 @@ export const MapSection: React.FC = () => {
             <h3 className="map-title">Pepsi vs Coca-Cola Market Share by State</h3>
           </div>
 
-          <HighchartsReact
-            highcharts={Highcharts}
-            constructorType={'mapChart'}
-            options={mapOptions}
-          />
+          <div className="map-chart-wrapper">
+            <div className="map-chart-inner">
+              <HighchartsReact
+                highcharts={Highcharts}
+                constructorType={'mapChart'}
+                options={mapOptions}
+              />
+            </div>
+          </div>
 
           {/* Legend */}
           <div className="legend">
