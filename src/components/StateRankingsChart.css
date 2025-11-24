@@ -38,6 +38,11 @@
   max-height: 100%;
 }
 
+.ranking-container .highcharts-tooltip-container {
+  overflow: visible !important;
+  z-index: 12000 !important;
+}
+
 .ranking-chart-inner {
   width: 100%;
   padding-right: 8px;
