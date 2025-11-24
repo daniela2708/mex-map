@@ -96,7 +96,7 @@ export const MapSection: React.FC = () => {
           chart: {
             map: topology as any,
             backgroundColor: '#ffffff',
-            height: 380,
+            height: 330,
             spacing: [10, 10, 10, 10]
           },
           credits: {
