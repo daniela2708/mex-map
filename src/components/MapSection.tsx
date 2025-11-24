@@ -35,14 +35,17 @@ export const MapSection: React.FC = () => {
     Promise.all([
       fetch('/data/market-data.json').then(res => {
         console.log('🔍 DEBUG: Market data fetch response:', res.status);
+        if (!res.ok) throw new Error(`Failed to fetch market data: ${res.status}`);
         return res.json();
       }),
       fetch('/data/mx-all.topo.json').then(res => {
         console.log('🔍 DEBUG: Topology fetch response:', res.status);
+        if (!res.ok) throw new Error(`Failed to fetch topology: ${res.status}`);
         return res.json();
       }),
       fetch('/mexico_state_flags/state_flags.json').then(res => {
         console.log('🔍 DEBUG: State flags fetch response:', res.status);
+        if (!res.ok) throw new Error(`Failed to fetch state flags: ${res.status}`);
         return res.json();
       })
     ])
@@ -52,6 +55,8 @@ export const MapSection: React.FC = () => {
         console.log('🔍 DEBUG: State flags loaded:', stateFlagsJson);
 
         // Guardar las banderas en el estado
+        console.log('🏳️ DEBUG: Setting state flags, count:', Object.keys(stateFlagsJson).length);
+        console.log('🏳️ DEBUG: First 3 flags:', Object.keys(stateFlagsJson).slice(0, 3).map(key => `${key}: ${stateFlagsJson[key]}`));
         setStateFlags(stateFlagsJson);
 
         // Transform data for Highcharts - assign color based on dominant brand
@@ -356,6 +361,8 @@ export const MapSection: React.FC = () => {
       })
       .catch(error => {
         console.error('❌ ERROR: Failed to load map data:', error);
+        console.error('❌ ERROR details:', error.message);
+        console.error('❌ ERROR stack:', error.stack);
       });
   }, []);
 
@@ -394,8 +401,18 @@ export const MapSection: React.FC = () => {
 
       <div className="charts-grid">
         {/* Ranking Chart */}
-        {rankingOptions && Object.keys(stateFlags).length > 0 && (
-          <StateRankingsChart rankingOptions={rankingOptions} stateFlags={stateFlags} />
+        {rankingOptions && Object.keys(stateFlags).length > 0 ? (
+          <>
+            {console.log('🎨 DEBUG: Rendering StateRankingsChart with flags:', Object.keys(stateFlags).length)}
+            <StateRankingsChart rankingOptions={rankingOptions} stateFlags={stateFlags} />
+          </>
+        ) : (
+          <>
+            {console.log('⏳ DEBUG: Waiting for ranking data or flags', {
+              hasRankingOptions: !!rankingOptions,
+              flagsCount: Object.keys(stateFlags).length
+            })}
+          </>
         )}
 
         {/* Map Chart */}
