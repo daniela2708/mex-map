@@ -1,24 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Highcharts from 'highcharts';
-import HighchartsMap from 'highcharts/modules/map';
 import { BrandDominanceMap } from './BrandDominanceMap';
 import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
-
-// Initialize Highcharts Map module
-(HighchartsMap as any)(Highcharts);
-
-// Disable accessibility warning
-Highcharts.setOptions({
-  accessibility: {
-    enabled: false
-  }
-});
 
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
   const [stateFlags, setStateFlags] = useState<Record<string, string>>({});
+  const mapInitialized = useRef(false);
+
+  useEffect(() => {
+    // Initialize Highcharts Map module only once
+    if (!mapInitialized.current) {
+      import('highcharts/modules/map').then((module: any) => {
+        const initMap = module.default;
+        if (typeof initMap === 'function') {
+          initMap(Highcharts);
+        }
+
+        // Disable accessibility warning
+        Highcharts.setOptions({
+          accessibility: {
+            enabled: false
+          }
+        });
+
+        mapInitialized.current = true;
+      });
+    }
+  }, []);
 
   useEffect(() => {
     // Fetch market data, topology, and state flags in parallel
