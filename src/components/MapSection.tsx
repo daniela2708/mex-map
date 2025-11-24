@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
+import HighchartsMapModule from 'highcharts/modules/map.js';
+import { BrandDominanceMap } from './BrandDominanceMap';
+import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
 
-// Import and initialize Highcharts Map module
+// Initialize Highcharts Map module
 console.log('🔍 DEBUG: Before importing map module');
 console.log('🔍 DEBUG: Highcharts object:', Highcharts);
-
-import HighchartsMapModule from 'highcharts/modules/map.js';
-
 console.log('🔍 DEBUG: HighchartsMapModule imported:', HighchartsMapModule);
 console.log('🔍 DEBUG: Type of HighchartsMapModule:', typeof HighchartsMapModule);
 
-// Initialize map module
 try {
   (HighchartsMapModule as any)(Highcharts);
   console.log('🔍 DEBUG: Map module initialized');
@@ -98,7 +96,7 @@ export const MapSection: React.FC = () => {
           chart: {
             map: topology as any,
             backgroundColor: '#ffffff',
-            height: '100%',
+            height: 380,
             spacing: [10, 10, 10, 10]
           },
           credits: {
@@ -284,7 +282,7 @@ export const MapSection: React.FC = () => {
         setMapOptions(options);
         console.log('✅ DEBUG: Map options set successfully');
 
-        const rankingChartHeight = Math.max(rankingData.length * 32, 720);
+        const rankingChartHeight = Math.max(rankingData.length * 32, 500);
 
         const rankingChartOptions: Highcharts.Options = {
           chart: {
@@ -504,58 +502,10 @@ export const MapSection: React.FC = () => {
 
       <div className="charts-grid">
         {/* Ranking Chart */}
-        <div className="ranking-container">
-          <div className="map-title-bar">
-            <h3 className="map-title">Total Volume Ranking by State</h3>
-          </div>
-
-          {rankingOptions && (
-            <div className="ranking-chart-wrapper">
-              <div className="ranking-chart-inner">
-                <HighchartsReact
-                  highcharts={Highcharts}
-                  options={rankingOptions}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+        {rankingOptions && <StateRankingsChart rankingOptions={rankingOptions} />}
 
         {/* Map Chart */}
-        <div className="map-container">
-          <div className="map-title-bar">
-            <h3 className="map-title">Pepsi vs Coca-Cola Market Share by State</h3>
-          </div>
-
-          <div className="map-chart-wrapper">
-            <div className="map-chart-inner">
-              <HighchartsReact
-                highcharts={Highcharts}
-                constructorType={'mapChart'}
-                options={mapOptions}
-              />
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="legend">
-            <div className="legend-title">Dominant Brand</div>
-            <div className="brand-label pepsi-label">
-              <span className="brand-dot pepsi"></span>
-              <span>Pepsi</span>
-            </div>
-
-            <div className="brand-label coke-label">
-              <span className="brand-dot coke"></span>
-              <span>Coca-Cola</span>
-            </div>
-
-            <div className="brand-label others-label">
-              <span className="brand-dot others"></span>
-              <span>Others</span>
-            </div>
-          </div>
-        </div>
+        {mapOptions && <BrandDominanceMap mapOptions={mapOptions} />}
       </div>
     </section>
   );
