@@ -145,47 +145,6 @@ export const MapSection: React.FC = () => {
             style: {
               padding: '0'
             },
-            // Inspired by the intelligent positioning logic used in the
-            // European map tooltip behavior. Keeps the tooltip visible on
-            // small screens by centering it and avoids viewport overflow on
-            // desktop by flipping when needed.
-            positioner: function(labelWidth, labelHeight, point) {
-              const chart = this.chart;
-              const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-              // Base position near the hovered point
-              let x = chart.plotLeft + (point.plotX || 0) + 15;
-              let y = chart.plotTop + (point.plotY || 0) - labelHeight - 15;
-
-              if (isMobile) {
-                // Center horizontally on mobile to avoid clipping
-                x = Math.max(10, (chart.chartWidth - labelWidth) / 2);
-                // Prefer positioning below the point, but keep within bounds
-                y = chart.plotTop + (point.plotY || 0) + 20;
-
-                if (y + labelHeight > chart.chartHeight - 10) {
-                  y = Math.max(10, chart.chartHeight - labelHeight - 10);
-                }
-
-                return { x, y };
-              }
-
-              // Desktop adjustments: flip to left if overflowing right edge
-              if (x + labelWidth > chart.chartWidth - 10) {
-                x = chart.plotLeft + (point.plotX || 0) - labelWidth - 15;
-              }
-
-              // If tooltip goes above the chart, move it below the point
-              if (y < 10) {
-                y = chart.plotTop + (point.plotY || 0) + 20;
-              }
-
-              // Constrain to chart area
-              x = Math.max(10, Math.min(x, chart.chartWidth - labelWidth - 10));
-              y = Math.max(10, Math.min(y, chart.chartHeight - labelHeight - 10));
-
-              return { x, y };
-            },
             formatter: function() {
               const stateCode = (this as any).point?.['hc-key'] as string;
               const stateData = marketDataJson[stateCode];
