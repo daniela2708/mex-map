@@ -289,8 +289,8 @@ export const MapSection: React.FC = () => {
             type: 'bar',
             backgroundColor: '#ffffff',
             height: rankingChartHeight,
-            marginLeft: 180,
-            marginRight: 20
+            marginLeft: 160,
+            marginRight: 10
           },
           credits: {
             enabled: false
