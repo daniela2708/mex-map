@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { MarketDataMap } from '../types/marketData';
 import './MapSection.css';
 
 // Import and initialize Highcharts Map module
@@ -13,13 +12,12 @@ import HighchartsMapModule from 'highcharts/modules/map.js';
 console.log('🔍 DEBUG: HighchartsMapModule imported:', HighchartsMapModule);
 console.log('🔍 DEBUG: Type of HighchartsMapModule:', typeof HighchartsMapModule);
 
-if (typeof HighchartsMapModule === 'function') {
-  console.log('🔍 DEBUG: Calling HighchartsMapModule as function');
-  HighchartsMapModule(Highcharts);
+// Initialize map module
+try {
+  (HighchartsMapModule as any)(Highcharts);
   console.log('🔍 DEBUG: Map module initialized');
-} else {
-  console.error('❌ ERROR: HighchartsMapModule is not a function, it is:', typeof HighchartsMapModule);
-  console.error('❌ ERROR: HighchartsMapModule value:', HighchartsMapModule);
+} catch (error) {
+  console.error('❌ ERROR: Failed to initialize map module:', error);
 }
 
 console.log('🔍 DEBUG: Highcharts after map init:', Highcharts);
@@ -28,8 +26,6 @@ console.log('🔍 DEBUG: Highcharts.maps?', Highcharts.maps);
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
-  const [marketData, setMarketData] = useState<MarketDataMap | null>(null);
-  const [stateFlags, setStateFlags] = useState<Record<string, string>>({});
 
   console.log('🔍 DEBUG: MapSection component rendered');
 
@@ -55,9 +51,6 @@ export const MapSection: React.FC = () => {
         console.log('🔍 DEBUG: Market data loaded:', marketDataJson);
         console.log('🔍 DEBUG: Topology data loaded:', topology);
         console.log('🔍 DEBUG: State flags loaded:', stateFlagsJson);
-
-        setMarketData(marketDataJson);
-        setStateFlags(stateFlagsJson);
 
         // Transform data for Highcharts - assign color based on dominant brand
         const data = Object.keys(marketDataJson).map(key => {
@@ -263,7 +256,6 @@ export const MapSection: React.FC = () => {
             },
             dataLabels: {
               enabled: true,
-              format: null,
               formatter: function() {
                 // Extract state abbreviation from hc-key (e.g., 'mx-ag' -> 'AG')
                 const key = (this as any).point?.['hc-key'] as string;
@@ -360,7 +352,7 @@ export const MapSection: React.FC = () => {
               padding: '0'
             },
             formatter: function() {
-              const point = this.point as any;
+              const point = this as any;
               const stateData = point.data;
 
               if (!stateData) return '';
