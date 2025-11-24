@@ -25,6 +25,9 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
         borderColor: '#e5e5e5',
         shadow: { color: 'rgba(0, 0, 0, 0.15)', offsetX: 0, offsetY: 4, width: 12 },
         padding: 0,
+        style: {
+          zIndex: 10000
+        },
         outside: true,
         formatter: function (this: Highcharts.Point) {
           const stateData = (this.options as Highcharts.PointOptionsObject & { data?: any }).data;
