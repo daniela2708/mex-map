@@ -89,17 +89,45 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
 
   // Configurar el callback del chart cuando esté listo
   const chartCallback = useCallback((chart: Highcharts.Chart) => {
+    console.log('🎯 Chart callback ejecutado');
+    console.log('🎯 Series:', chart.series);
+    console.log('🎯 Points:', chart.series[0]?.points);
+
+    if (!chart.series[0] || !chart.series[0].points) {
+      console.error('❌ No hay puntos en la serie');
+      return;
+    }
+
     // Configurar eventos de hover para cada punto
-    chart.series[0].points.forEach((point: any) => {
+    chart.series[0].points.forEach((point: any, index: number) => {
+      console.log(`🎯 Configurando eventos para punto ${index}`);
+
       const element = point.graphic?.element;
-      if (!element || !tooltipRef.current) return;
+      if (!element) {
+        console.warn(`⚠️ No hay elemento gráfico para punto ${index}`);
+        return;
+      }
+      if (!tooltipRef.current) {
+        console.warn(`⚠️ No hay tooltipRef`);
+        return;
+      }
+
+      console.log(`✅ Elemento configurado para punto ${index}`);
 
       element.addEventListener('mouseenter', () => {
+        console.log('🖱️ Mouse enter en barra!');
         const tooltip = tooltipRef.current;
-        if (!tooltip) return;
+        if (!tooltip) {
+          console.error('❌ No tooltip ref en mouseenter');
+          return;
+        }
 
-        const stateData = point.data;
-        if (!stateData) return;
+        console.log('🔍 Point options:', point.options);
+        const stateData = point.options.data;
+        if (!stateData) {
+          console.error('❌ No state data found for point');
+          return;
+        }
 
         console.log('🔍 State data:', stateData);
         console.log('🔍 State flags available:', stateFlagsRef.current);
