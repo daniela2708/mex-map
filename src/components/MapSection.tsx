@@ -98,8 +98,10 @@ export const MapSection: React.FC = () => {
           chart: {
             map: topology as any,
             backgroundColor: '#ffffff',
-            height: '100%',
-            spacing: [10, 10, 10, 10]
+            height: 720,
+            spacing: [8, 12, 8, 12],
+            marginTop: 10,
+            marginBottom: 10
           },
           credits: {
             enabled: false
