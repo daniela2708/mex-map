@@ -20,6 +20,7 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
         borderWidth: 1,
         shadow: { color: 'rgba(0, 0, 0, 0.08)', offsetX: 0, offsetY: 2, width: 8 },
         padding: 0,
+        outside: true,
         style: {
           zIndex: 10000
         },

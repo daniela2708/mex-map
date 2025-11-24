@@ -34,18 +34,20 @@
   min-height: 0;
   position: relative;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
   max-height: 100%;
 }
 
 .ranking-container .highcharts-tooltip-container {
   overflow: visible !important;
   z-index: 12000 !important;
+  pointer-events: none !important;
 }
 
 .ranking-chart-inner {
   width: 100%;
   padding-right: 8px;
+  overflow: visible !important;
 }
 
 .ranking-chart-wrapper::-webkit-scrollbar {
