@@ -1,12 +1,18 @@
 import React, { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import type { StateMarketData } from './MapSection';
 import './StateRankingsChart.css';
 
 interface StateRankingsChartProps {
   rankingOptions: Highcharts.Options;
   stateFlags: Record<string, string>;
 }
+
+type RankingPointOptions = Highcharts.PointOptionsObject & {
+  tooltipData?: StateMarketData;
+  data?: StateMarketData;
+};
 
 export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingOptions, stateFlags }) => {
   const modifiedOptions: Highcharts.Options = useMemo(() => {
@@ -25,7 +31,9 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
           zIndex: 10000
         },
         formatter: function (this: Highcharts.Point) {
-          const stateData = (this.options as any).data;
+          const pointOptions = this.options as RankingPointOptions | undefined;
+
+          const stateData = pointOptions?.tooltipData || pointOptions?.data;
 
           if (!stateData) {
             return '';

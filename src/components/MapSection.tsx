@@ -4,6 +4,18 @@ import { BrandDominanceMap } from './BrandDominanceMap';
 import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
 
+export interface StateMarketData {
+  name: string;
+  pepsi: number;
+  cocaCola: number;
+  others: number;
+  pepsiVolume: number;
+  colaVolume: number;
+  othersVolume: number;
+}
+
+type MapPointOptions = Highcharts.SeriesMapDataOptions & { 'hc-key': string };
+
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
   const [rankingOptions, setRankingOptions] = useState<Highcharts.Options | null>(null);
@@ -11,14 +23,13 @@ export const MapSection: React.FC = () => {
   const [isMapModuleLoaded, setIsMapModuleLoaded] = useState(false);
 
   useEffect(() => {
-    // Initialize Highcharts Map module
-    import('highcharts/modules/map').then((module: any) => {
-      const initMap = module.default;
+    import('highcharts/modules/map').then(module => {
+      const initMap = (module as unknown as { default?: (hc: typeof Highcharts) => void }).default;
+
       if (typeof initMap === 'function') {
         initMap(Highcharts);
       }
 
-      // Disable accessibility warning
       Highcharts.setOptions({
         accessibility: {
           enabled: false
@@ -47,17 +58,21 @@ export const MapSection: React.FC = () => {
         if (!res.ok) throw new Error(`Failed to fetch state flags: ${res.status}`);
         return res.json();
       })
-    ])
-      .then(([marketDataJson, topology, stateFlagsJson]) => {
-        // Guardar las banderas en el estado
-        setStateFlags(stateFlagsJson);
+      ])
+        .then(([marketDataJson, topology, stateFlagsJson]) => {
+          const marketData = marketDataJson as Record<string, StateMarketData>;
+          const topoJson = topology as Highcharts.TopoJSON;
+          const flags = stateFlagsJson as Record<string, string>;
 
-        // Transform data for Highcharts - assign color based on dominant brand
-        const data = Object.keys(marketDataJson).map(key => {
-          const stateData = marketDataJson[key];
-          const max = Math.max(stateData.pepsi, stateData.cocaCola, stateData.others);
+          // Guardar las banderas en el estado
+          setStateFlags(flags);
 
-          let color;
+          // Transform data for Highcharts - assign color based on dominant brand
+          const data: MapPointOptions[] = Object.keys(marketData).map(key => {
+            const stateData = marketData[key];
+            const max = Math.max(stateData.pepsi, stateData.cocaCola, stateData.others);
+
+            let color;
           if (stateData.pepsi === max) {
             color = '#1C52A2'; // Pepsi blue
           } else if (stateData.cocaCola === max) {
@@ -76,10 +91,10 @@ export const MapSection: React.FC = () => {
         console.log('🔍 DEBUG: Transformed data:', data);
 
         // Prepare ranking data - calculate total volume for each state
-        const rankingData = Object.keys(marketDataJson)
+        const rankingData = Object.keys(marketData)
           .filter(key => !/^\d+$/.test(key.split('-')[1])) // Filter out numeric codes like mx-3622
           .map(key => {
-            const stateData = marketDataJson[key];
+            const stateData = marketData[key];
             const abbr = key.split('-')[1];
             const totalVolume = stateData.pepsiVolume + stateData.colaVolume + stateData.othersVolume;
 
@@ -87,17 +102,18 @@ export const MapSection: React.FC = () => {
               name: `${stateData.name} (${abbr ? abbr.toUpperCase() : ''})`,
               stateName: stateData.name,
               y: totalVolume,
-              data: stateData
+              data: stateData,
+              tooltipData: stateData
             };
           })
           .sort((a, b) => b.y - a.y); // Sort by total volume descending
 
-        const options: Highcharts.Options = {
-          chart: {
-            map: topology as any,
-            backgroundColor: '#ffffff',
-            height: 330,
-            spacing: [10, 10, 10, 10]
+          const options: Highcharts.Options = {
+            chart: {
+              map: topoJson,
+              backgroundColor: '#ffffff',
+              height: 330,
+              spacing: [10, 10, 10, 10]
           },
           credits: {
             enabled: false
@@ -128,9 +144,9 @@ export const MapSection: React.FC = () => {
           legend: {
             enabled: false
           },
-          tooltip: {
-            backgroundColor: '#ffffff',
-            borderWidth: 1,
+            tooltip: {
+              backgroundColor: '#ffffff',
+              borderWidth: 1,
             borderColor: '#e5e5e5',
             borderRadius: 6,
             shadow: {
@@ -143,9 +159,10 @@ export const MapSection: React.FC = () => {
             style: {
               padding: '0'
             },
-            formatter: function() {
-              const stateCode = (this as any).point?.['hc-key'] as string;
-              const stateData = marketDataJson[stateCode];
+              formatter: function(this: Highcharts.Point) {
+                const pointOptions = this.options as MapPointOptions | undefined;
+                const stateCode = pointOptions?.['hc-key'];
+                const stateData = stateCode ? marketData[stateCode] : undefined;
 
               if (!stateData) return '';
 
@@ -242,7 +259,7 @@ export const MapSection: React.FC = () => {
           },
           series: [{
             type: 'map',
-            data: data as any,
+            data,
             name: 'Market Share',
             showInLegend: false,
             enableMouseTracking: true,
@@ -255,9 +272,10 @@ export const MapSection: React.FC = () => {
             },
             dataLabels: {
               enabled: true,
-              formatter: function() {
+              formatter: function(this: Highcharts.Point) {
                 // Extract state abbreviation from hc-key (e.g., 'mx-ag' -> 'AG')
-                const key = (this as any).point?.['hc-key'] as string;
+                const pointOptions = this.options as MapPointOptions | undefined;
+                const key = pointOptions?.['hc-key'];
                 if (!key) return '';
                 const abbr = key.split('-')[1];
                 // Don't show numeric codes (like mx-3622)
