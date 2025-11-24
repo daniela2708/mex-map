@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
-import HighchartsMapModule from 'highcharts/modules/map.js';
+import HighchartsMap from 'highcharts/modules/map';
 import { BrandDominanceMap } from './BrandDominanceMap';
 import { StateRankingsChart } from './StateRankingsChart';
 import './MapSection.css';
 
 // Initialize Highcharts Map module
-(HighchartsMapModule as any)(Highcharts);
+if (typeof HighchartsMap === 'function') {
+  HighchartsMap(Highcharts);
+}
+
+// Disable accessibility warning
+Highcharts.setOptions({
+  accessibility: {
+    enabled: false
+  }
+});
 
 export const MapSection: React.FC = () => {
   const [mapOptions, setMapOptions] = useState<Highcharts.Options | null>(null);
