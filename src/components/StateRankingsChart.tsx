@@ -28,30 +28,36 @@ export const StateRankingsChart: React.FC<StateRankingsChartProps> = ({ rankingO
         style: {
           zIndex: 10000
         },
-        outside: true,
-        followPointer: true,
-        positioner: function (this: Highcharts.Tooltip, labelWidth, labelHeight, point) {
-          const chartPosition = this.chart.pointer.getChartPosition ? this.chart.pointer.getChartPosition() : { left: 0, top: 0 };
-          const tooltipPos = (point && (point as Highcharts.Point).tooltipPos) || [0, 0];
-          const margin = 12;
+        outside: false,
+        positioner: function (labelWidth, labelHeight, point) {
+          const chart = this.chart;
+          const plotLeft = chart.plotLeft;
+          const plotTop = chart.plotTop;
+          const plotWidth = chart.plotWidth;
+          const plotHeight = chart.plotHeight;
 
-          let x = tooltipPos[0] + chartPosition.left + this.chart.plotLeft + margin;
-          let y = tooltipPos[1] + chartPosition.top + this.chart.plotTop + margin;
+          // Posición del punto en el gráfico
+          const pointY = point.plotY || 0;
 
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
+          const padding = 15;
+          let x = plotLeft + plotWidth + padding; // A la derecha del gráfico
+          let y = plotTop + pointY - labelHeight / 2;
 
-          if (x + labelWidth + margin > viewportWidth) {
-            x = viewportWidth - labelWidth - margin;
+          // Ajustar si se sale por la derecha del contenedor
+          if (x + labelWidth > chart.chartWidth - padding) {
+            x = plotLeft - labelWidth - padding; // A la izquierda del gráfico
           }
 
-          if (y + labelHeight + margin > viewportHeight) {
-            y = viewportHeight - labelHeight - margin;
+          // Ajustar verticalmente si se sale
+          if (y < plotTop) {
+            y = plotTop;
+          } else if (y + labelHeight > plotTop + plotHeight) {
+            y = plotTop + plotHeight - labelHeight;
           }
 
           return {
-            x: Math.max(margin, x),
-            y: Math.max(margin, y)
+            x: Math.max(padding, x),
+            y: Math.max(padding, y)
           };
         },
         formatter: function (this: Highcharts.Point) {
